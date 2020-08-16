@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Character/Art/blue_char.png" type="Texture" id=1]
 [ext_resource path="res://Character/player.gd" type="Script" id=2]
-[ext_resource path="res://icon.png" type="Texture" id=3]
+[ext_resource path="res://UI/HealthBar/health_bar.tscn" type="PackedScene" id=3]
 
 [sub_resource type="AtlasTexture" id=1]
 atlas = ExtResource( 1 )
@@ -59,14 +59,14 @@ script = ExtResource( 2 )
 position = Vector2( 0, -8 )
 frames = SubResource( 9 )
 animation = "Idle"
+frame = 4
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2( 0.128517, -4.50207 )
 shape = SubResource( 10 )
 
-[node name="Selected" type="Sprite" parent="."]
+[node name="HealthBar" parent="." instance=ExtResource( 3 )]
 visible = false
-position = Vector2( -0.160488, -14.5211 )
-scale = Vector2( 0.061723, 0.0600015 )
-texture = ExtResource( 3 )
+margin_top = -19.9434
+margin_bottom = -3.9434

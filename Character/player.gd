@@ -21,9 +21,9 @@ func _ready():
 
 func _input(event):
 	if is_selected:
-		$Selected.show()
+		$HealthBar.show()
 	else:
-		$Selected.hide()
+		$HealthBar.hide()
 	if event.is_action_pressed('right_click') and is_selected:
 		is_gathering = false
 		$AnimatedSprite.play("Run")
@@ -50,7 +50,8 @@ func _physics_process(delta):
 		elif distance_to_next <= 1.0 :
 			path.remove(0)
 			set_process(false)
-			$AnimatedSprite.play("Idle")
+			if path.size() == 0:
+				$AnimatedSprite.play("Idle")
 			break	
 		starting_point = path[0]
 
@@ -61,7 +62,7 @@ func _gathering():
 
 func _get_path():
 	if is_selected:
-		path = NavScriptNode.request_path(self.global_position)
+		path = NavScriptNode.request_path(self.global_position, get_global_mouse_position())
 
 func set_path(value : PoolVector2Array):
 	is_gathering = true

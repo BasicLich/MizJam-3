@@ -28,7 +28,8 @@ func _unhandled_input(event : InputEvent) -> void:
 				drag_start = get_global_mouse_position()
 			else:
 				for item in selected:
-					item.collider.is_selected = false
+					if item.collider.is_in_group("Friendly"):
+						item.collider.is_selected = false
 				dragging = true
 				drag_start = get_global_mouse_position()
 				selected = []
@@ -43,7 +44,8 @@ func _unhandled_input(event : InputEvent) -> void:
 			query.transform = Transform2D(0, (drag_end + drag_start) / 2)
 			selected = space.intersect_shape(query)
 			for item in selected:
-				item.collider.is_selected = true
+				if item.collider.is_in_group("Friendly"):
+					item.collider.is_selected = true
 	if event is InputEventMouseMotion and dragging:
 		update()
 
@@ -55,8 +57,8 @@ func _draw():
 
 
 
-func request_path(actor_position : Vector2):
-	var new_path : = nav_2d.get_simple_path(actor_position, get_global_mouse_position())
+func request_path(actor_position : Vector2, target : Vector2):
+	var new_path : = nav_2d.get_simple_path(actor_position, target)
 	return new_path
 
 

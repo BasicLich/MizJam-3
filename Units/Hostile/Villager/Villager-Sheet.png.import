@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Warrior-Sheet.png-5ae7357fc06a7f4a737b1b8df9110d45.stex"
+path="res://.import/Villager-Sheet.png-15f8327efb12c13dfc79e44e40af67fa.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Units/warrior_1/Warrior-Sheet.png"
-dest_files=[ "res://.import/Warrior-Sheet.png-5ae7357fc06a7f4a737b1b8df9110d45.stex" ]
+source_file="res://Units/Hostile/Villager/Villager-Sheet.png"
+dest_files=[ "res://.import/Villager-Sheet.png-15f8327efb12c13dfc79e44e40af67fa.stex" ]
 
 [params]
 

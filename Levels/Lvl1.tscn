@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Levels/world.gd" type="Script" id=1]
 [ext_resource path="res://Levels/world_tile.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Character/player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Character/Camera.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Units/warrior_1/warrior_1.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Units/Friendly/warrior_1/warrior_1.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Units/Hostile/Villager/Villager.tscn" type="PackedScene" id=6]
 
 [node name="Lvl1" type="Node2D"]
 z_index = 5
@@ -28,3 +29,6 @@ position = Vector2( 88.3248, 26.2063 )
 
 [node name="Warrior_2" parent="." instance=ExtResource( 5 )]
 position = Vector2( 48.5301, 27.1769 )
+
+[node name="Villager" parent="." instance=ExtResource( 6 )]
+position = Vector2( 177.133, 47.8983 )
