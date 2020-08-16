@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Character/player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Character/Camera.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Levels/world.tscn" type="PackedScene" id=4]
+
+
+
+
+[node name="Playground" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource( 2 )]
+position = Vector2( 125.086, 38.6446 )
+z_index = 2
+
+[node name="Camera" parent="." instance=ExtResource( 3 )]
+
+[node name="Navigation2D" parent="." instance=ExtResource( 4 )]
