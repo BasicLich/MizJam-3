@@ -1,0 +1,101 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://UI/HealthBar/health_bar.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Units/Hostile/Farmer/Farmer.gd" type="Script" id=2]
+[ext_resource path="res://Units/Hostile/Farmer/Farmer-Sheet.png" type="Texture" id=3]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 5.10226
+height = 4.59369
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 38.5937
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 16, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 3 )
+region = Rect2( 32, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 3 )
+region = Rect2( 48, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 3 )
+region = Rect2( 64, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 3 )
+region = Rect2( 80, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=9]
+atlas = ExtResource( 3 )
+region = Rect2( 96, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=10]
+atlas = ExtResource( 3 )
+region = Rect2( 112, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=11]
+atlas = ExtResource( 3 )
+region = Rect2( 128, 0, 16, 16 )
+
+[sub_resource type="AtlasTexture" id=12]
+atlas = ExtResource( 3 )
+region = Rect2( 144, 0, 16, 16 )
+
+[sub_resource type="SpriteFrames" id=13]
+animations = [ {
+"frames": [ SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ) ],
+"loop": true,
+"name": "Run",
+"speed": 5.0
+}, {
+"frames": [ SubResource( 7 ), SubResource( 8 ), SubResource( 9 ), SubResource( 10 ), SubResource( 11 ), SubResource( 12 ) ],
+"loop": true,
+"name": "Attack",
+"speed": 5.0
+} ]
+
+[node name="Farmer" type="KinematicBody2D" groups=[
+"Hostile",
+]]
+script = ExtResource( 2 )
+MaxHealth = 75.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource( 1 )
+
+[node name="FearRange" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FearRange"]
+shape = SubResource( 2 )
+
+[node name="HealthBar" parent="." instance=ExtResource( 1 )]
+modulate = Color( 1, 1, 1, 0.694118 )
+margin_top = -15.9434
+margin_bottom = 0.0566006
+
+[node name="AggroTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 13 )
+animation = "Run"
+frame = 1
+playing = true
+
+[node name="PathTimer" type="Timer" parent="."]
+wait_time = 3.0
+[connection signal="body_entered" from="FearRange" to="." method="_on_FearRange_body_entered"]
+[connection signal="body_exited" from="FearRange" to="." method="_on_FearRange_body_exited"]
+[connection signal="timeout" from="AggroTimer" to="." method="_on_AggroTimer_timeout"]
+[connection signal="timeout" from="PathTimer" to="." method="_on_PathTimer_timeout"]

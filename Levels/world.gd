@@ -4,6 +4,7 @@ onready var nav_2d : Navigation2D = $Navigation2D
 
 var dragging = false
 var selected = []
+var selected_wr = {}
 var drag_start = Vector2.ZERO
 var select_rect = RectangleShape2D.new()
 
@@ -28,11 +29,13 @@ func _unhandled_input(event : InputEvent) -> void:
 				drag_start = get_global_mouse_position()
 			else:
 				for item in selected:
-					if item.collider.is_in_group("Friendly"):
-						item.collider.is_selected = false
+					if is_instance_valid(item.collider): 
+						if item.collider.is_in_group("Friendly"):
+							item.collider.is_selected = false
 				dragging = true
 				drag_start = get_global_mouse_position()
 				selected = []
+				selected_wr = []
 		elif dragging:
 			dragging = false
 			update()
