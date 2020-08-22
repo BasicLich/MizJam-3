@@ -1,15 +1,19 @@
 extends KinematicBody2D
 
-onready var NavScriptNode  = get_node("..")
+onready var NavScriptNode  = get_node("../..")
 
-
+export (float) var max_health = 100.0
 export (float) var speed = 50.0
 
 var path : = PoolVector2Array() setget set_path
 var is_selected : bool = false
 
 var velocity = Vector2()
+var old_position
 var collision
+
+onready var health = max_health
+
 
 var is_gathering : bool = false
 
@@ -26,7 +30,11 @@ func _input(event):
 		$HealthBar.hide()
 	if event.is_action_pressed('right_click') and is_selected:
 		is_gathering = false
+		_get_path()
 		$AnimatedSprite.play("Run")
+	elif event.is_action_pressed("stop_move") and is_selected:
+		$AnimatedSprite.play("Idle")
+		path = []
 
 
 func _physics_process(delta):
@@ -70,4 +78,28 @@ func set_path(value : PoolVector2Array):
 	if value.size() == 0: 
 		return
 	set_process(true)
+	
+func _on_PathingTimer_timeout():
+	if path.size() ==1:
+		if position.distance_squared_to(old_position) < 300:
+				$AnimatedSprite.play("Idle")
+				$Aggro/AggroCollider.disabled = false
+				path = []
+		old_position = position
 
+
+func take_damage(damage : float):
+	health -= damage
+	$HealthBar.value = (health/max_health)*100
+
+	if health <= 0.0:
+		_die()
+
+
+func _die():
+	queue_free()
+
+
+
+func _on_PathTimer_timeout():
+	pass # Replace with function body.

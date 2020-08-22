@@ -1,18 +1,19 @@
 extends KinematicBody2D
 
 export (float) var BaseSpeed = 20.0
-export var MaxHealth : float = 100
+export var MaxHealth : float = 1000
 export var base_damage : float = 20
 
 onready var health : float = MaxHealth
 onready var speed : float = BaseSpeed
 
+onready var Bone = preload("res://Units/Hostile/Bones/bones.tscn")
+
 onready var healthBar = $HealthBar
 
 var targetList = []
 
-
-onready var NavScriptNode  = get_node("..")
+onready var NavScriptNode  = get_node("../..")
 
 var is_aggroed : bool = false
 var has_moved : bool = false #This is used to move back and forth (just to make seem more alive)
@@ -28,6 +29,8 @@ var velocity = Vector2()
 var collision
 
 var is_gathering : bool = false
+
+signal enemy_clicked
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -57,7 +60,8 @@ func take_damage(damage : float):
 	healthBar.value = (health/MaxHealth)*100
 
 	if health <= 0.0:
-		_die()
+		$AnimationPlayer.play("Die")
+		
 
 
 func _get_path():
@@ -72,13 +76,24 @@ func set_path(value : PoolVector2Array):
 	set_process(true)
 
 func _die():
+	var bone_spawn = Bone.instance()
+	bone_spawn.position = position
+	get_parent().add_child(bone_spawn)
+	
 	queue_free()
 
 func _on_FearRange_body_entered(body):
-	targetList.append(body)
 	if body.is_in_group("Friendly"):
+		print("target gained")
+		targetList.append(body)
+		print(targetList)
 		if target == null:
 			target = body
+			$FearRange/CollisionShape2D.scale.x = 0.5
+			$FearRange/CollisionShape2D.scale.y = 0.5
+			targetList = []
+			targetList.append(body)
+			
 		target_wr = weakref(target)
 		_chase_target(target)
 		$AggroTimer.start()
@@ -86,7 +101,12 @@ func _on_FearRange_body_entered(body):
 func _on_FearRange_body_exited(body):
 	if body.is_in_group("Friendly"):
 		targetList.erase(body)
-		target = targetList[0]
+		if body == target and targetList.size()>0:
+			target = targetList[0]
+			print("EXITED")
+			print(targetList)
+
+
 		
 
 
@@ -98,23 +118,30 @@ func _chase_target(_target):
 			is_attacking = true
 			$AnimatedSprite.play("Attack")
 			$AnimatedSprite.connect("animation_finished", self, "_reset_attack")
+	else:
+		if targetList.size()>0:
+			target = targetList[0]
+			target_wr = weakref(target)
+			_chase_target(target)
 
 func _reset_attack():
-	if target != null and target.has_method("take_damage"):
-		target.take_damage(base_damage)
+	if target != null :
+		if target.has_method("take_damage"):
+			target.take_damage(base_damage)
 	is_attacking = false
 	$AnimatedSprite.disconnect("animation_finished", self, "_reset_attack")
 	$AnimatedSprite.play("Run")
 
 
 func _on_AggroTimer_timeout():
-	var nearest_body = targetList[0]
-	if position.distance_squared_to(nearest_body.position) >= 50:
-		for body in targetList:
-			if position.distance_squared_to(nearest_body.position) < position.distance_squared_to(body.position):
-				nearest_body = body
-		target = nearest_body
-	_chase_target(target)
+#	if targetList.size() >0:
+#		var nearest_body = targetList[0]
+#		if position.distance_squared_to(nearest_body.position) >= 250:
+#			for body in targetList:
+#				if position.distance_squared_to(nearest_body.position) < position.distance_squared_to(body.position):
+#					nearest_body = body
+#			target = nearest_body
+		_chase_target(target) #If I uncomment in future, this may be on wrong indent
 			 
 		
 		
@@ -134,3 +161,17 @@ func _on_PathTimer_timeout():
 			has_moved = true
 
 
+
+
+func _on_Farmer_input_event(viewport, event, shape_idx):
+	if event is InputEventMouseButton:
+		if event.is_pressed():
+			if event.button_index == BUTTON_RIGHT:
+				emit_signal("enemy_clicked")
+
+
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == "Die":
+		_die()

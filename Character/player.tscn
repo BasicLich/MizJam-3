@@ -52,17 +52,22 @@ animations = [ {
 [sub_resource type="CircleShape2D" id=10]
 radius = 3.49288
 
-[node name="Player" type="KinematicBody2D"]
+[node name="Player" type="KinematicBody2D" groups=[
+"Friendly",
+"Player",
+]]
 script = ExtResource( 2 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 0, -8 )
 frames = SubResource( 9 )
 animation = "Idle"
-frame = 4
+frame = 3
 playing = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=[
+"Friendly",
+]]
 position = Vector2( 0.128517, -4.50207 )
 shape = SubResource( 10 )
 
@@ -70,3 +75,6 @@ shape = SubResource( 10 )
 visible = false
 margin_top = -19.9434
 margin_bottom = -3.9434
+
+[node name="PathTimer" type="Timer" parent="."]
+[connection signal="timeout" from="PathTimer" to="." method="_on_PathTimer_timeout"]

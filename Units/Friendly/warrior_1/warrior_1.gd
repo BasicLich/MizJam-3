@@ -1,6 +1,6 @@
 extends KinematicBody2D
 
-onready var NavScriptNode  = get_node("..")
+onready var NavScriptNode  = get_node("../..")
 onready var healthBar = $HealthBar
 
 
@@ -25,8 +25,8 @@ var target_wr
 var is_gathering : bool = false
 
 func _ready():
-	game_controller.player = self
 	NavScriptNode.connect("path_requested", self, "_get_path")
+	game_controller.connect("enemy_clicked", self, "_set_clicked_target")
 
 
 func _input(event):
@@ -41,6 +41,16 @@ func _input(event):
 		if is_attacking:
 			_reset_attack()
 		$AnimatedSprite.play("Run")
+	elif event.is_action_pressed("stop_move") and is_selected:
+		$Aggro/AggroCollider.disabled = false
+		if is_instance_valid(target):
+			if global_position.distance_squared_to(target.global_position) <= 400 and not is_attacking:
+				is_attacking = true
+				$AnimatedSprite.play("Attack")
+				$AnimatedSprite.connect("animation_finished", self, "_reset_attack")
+		path = []
+		
+	
 
 
 func _physics_process(delta):
@@ -104,10 +114,15 @@ func _on_AggroTimer_timeout():
 func _chase_target(_target):
 	if (target_wr.get_ref()):
 		path = NavScriptNode.request_path(self.global_position, _target.global_position)
-		if global_position.distance_squared_to(_target.global_position) <= 300 and not is_attacking:
+		if global_position.distance_squared_to(_target.global_position) <= 400 and not is_attacking:
 			is_attacking = true
 			$AnimatedSprite.play("Attack")
 			$AnimatedSprite.connect("animation_finished", self, "_reset_attack")
+
+func _set_clicked_target():
+	target = game_controller.ClickedEnemy
+	target_wr = weakref(target)
+	$AggroTimer.start()
 
 func _stop_chase():
 	$AggroTimer.stop()
@@ -128,7 +143,7 @@ func _on_Aggro_body_exited(body):
 
 func _on_PathingTimer_timeout():
 	if path.size() ==1 and not is_attacking:
-		if position.distance_squared_to(old_position) < 300:
+		if position.distance_squared_to(old_position) < 100:
 				$AnimatedSprite.play("Idle")
 				$Aggro/AggroCollider.disabled = false
 				path = []
@@ -142,6 +157,9 @@ func take_damage(damage : float):
 	if health <= 0.0:
 		_die()
 
-
 func _die():
 	queue_free()
+
+
+func raise():
+	$AnimationPlayer.play("Raise")

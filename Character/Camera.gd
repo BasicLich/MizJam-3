@@ -8,7 +8,7 @@ var zoompos = Vector2()
 var zoomfact = 1.0
 
 var zoomMin = 0.1
-var zoomMax = 0.8
+var zoomMax = 0.5
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

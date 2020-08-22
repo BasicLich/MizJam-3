@@ -1,14 +1,14 @@
 extends KinematicBody2D
 
 export (float) var BaseSpeed = 20.0
-export var MaxHealth : float = 75
+export var MaxHealth : float = 25
 
 onready var health : float = MaxHealth
 onready var speed : float = BaseSpeed
 
 onready var healthBar = $HealthBar
 
-onready var NavScriptNode  = get_node("..")
+onready var NavScriptNode  = get_node("../..")
 
 var is_feared : bool = false
 var is_fighter : bool = false
@@ -22,10 +22,18 @@ var velocity = Vector2()
 var collision
 
 var is_gathering : bool = false
+var rng = RandomNumberGenerator.new()
+
+var patrol_distance = Vector2()
+
+onready var Bone = preload("res://Units/Hostile/Bones/bones.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	rng.randomize()
+	patrol_distance.x = rng.randf_range(25,100)
+	patrol_distance.y = rng.randf_range(5,25)
+	$AggroTimer.wait_time = rng.randf_range(3,6)
 
 func _physics_process(delta):
 	var direction = Vector2()
@@ -51,7 +59,7 @@ func take_damage(damage : float):
 	healthBar.value = (health/MaxHealth)*100
 
 	if health <= 0.0:
-		_die()
+		$AnimationPlayer.play("Die")
 
 
 func _get_path():
@@ -66,6 +74,9 @@ func set_path(value : PoolVector2Array):
 	set_process(true)
 
 func _die():
+	var bone_spawn = Bone.instance()
+	bone_spawn.position = position
+	get_parent().add_child(bone_spawn)
 	queue_free()
 
 func _on_FearRange_body_entered(body):
@@ -85,15 +96,20 @@ func _on_AggroTimer_timeout():
 	if not is_feared:
 		var run_location= global_position
 		if has_moved:
-			run_location.x += 20
-			run_location.y += 30
+			run_location.x += patrol_distance.x
+			run_location.y += patrol_distance.y
 			path = NavScriptNode.request_path(self.global_position, run_location)
 			has_moved = false
 		else:
-			run_location.x -= 20
-			run_location.y -= 30
+			run_location.x -= patrol_distance.x
+			run_location.y -= patrol_distance.y
 			path = NavScriptNode.request_path(self.global_position, run_location)
 			has_moved = true
 			 
 		
 		
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == "Die":
+		_die()

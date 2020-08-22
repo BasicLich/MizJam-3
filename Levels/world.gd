@@ -18,8 +18,6 @@ func _ready():
 
  
 func _unhandled_input(event : InputEvent) -> void:
-#	if not event is InputEventMouseButton:
-#		return
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT:
 		emit_signal("path_requested")
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
@@ -30,7 +28,7 @@ func _unhandled_input(event : InputEvent) -> void:
 			else:
 				for item in selected:
 					if is_instance_valid(item.collider): 
-						if item.collider.is_in_group("Friendly"):
+						if item.collider.is_selected:
 							item.collider.is_selected = false
 				dragging = true
 				drag_start = get_global_mouse_position()
