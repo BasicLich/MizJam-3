@@ -77,10 +77,13 @@ func _die():
 	var bone_spawn = Bone.instance()
 	bone_spawn.position = position
 	get_parent().add_child(bone_spawn)
+	
+	game_controller.villagers_left -= 1
+	game_controller.updage_ui()
 	queue_free()
 
 func _on_FearRange_body_entered(body):
-	if body.is_in_group("Friendly"):
+	if not body.is_in_group("Hostile"):
 		if not is_fighter:
 			is_feared = true
 			var run_location = global_position

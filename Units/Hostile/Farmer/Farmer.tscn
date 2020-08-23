@@ -95,6 +95,7 @@ tracks/1/keys = {
 "Hostile",
 ]]
 input_pickable = true
+collision_layer = 2
 script = ExtResource( 2 )
 MaxHealth = 75.0
 

@@ -158,8 +158,15 @@ func take_damage(damage : float):
 		_die()
 
 func _die():
+	game_controller.current_skelly -= 1
+	game_controller.updage_ui()
 	queue_free()
-
 
 func raise():
 	$AnimationPlayer.play("Raise")
+
+
+func return_to_grave():
+	game_controller.currency += int((health/MaxHealth) *100)
+	_die()
+

@@ -54,33 +54,51 @@ tracks/0/keys = {
 [node name="Villager" type="KinematicBody2D" groups=[
 "Hostile",
 ]]
+collision_layer = 2
+collision_mask = 2
 script = ExtResource( 2 )
 
-[node name="Body" type="AnimatedSprite" parent="."]
+[node name="Body" type="AnimatedSprite" parent="." groups=[
+"Hostile",
+]]
 position = Vector2( -0.188934, 0 )
 frames = SubResource( 5 )
 playing = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=[
+"Hostile",
+]]
 visible = false
 shape = SubResource( 6 )
 
-[node name="FearRange" type="Area2D" parent="."]
+[node name="FearRange" type="Area2D" parent="." groups=[
+"Hostile",
+]]
+collision_layer = 2
+collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="FearRange"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FearRange" groups=[
+"Hostile",
+]]
 visible = false
 shape = SubResource( 7 )
 
-[node name="HealthBar" parent="." instance=ExtResource( 3 )]
+[node name="HealthBar" parent="." groups=[
+"Hostile",
+] instance=ExtResource( 3 )]
 modulate = Color( 1, 1, 1, 0.694118 )
 margin_top = -15.9434
 margin_bottom = 0.0566006
 
-[node name="AggroTimer" type="Timer" parent="."]
+[node name="AggroTimer" type="Timer" parent="." groups=[
+"Hostile",
+]]
 wait_time = 5.0
 autostart = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." groups=[
+"Hostile",
+]]
 anims/Die = SubResource( 8 )
 __meta__ = {
 "_editor_description_": ""

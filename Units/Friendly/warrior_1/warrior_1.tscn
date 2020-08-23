@@ -99,9 +99,12 @@ tracks/0/keys = {
 
 [node name="Warrior_1" type="KinematicBody2D" groups=[
 "Friendly",
+"Undead",
 ]]
 modulate = Color( 0.631373, 0.572549, 0.964706, 1 )
 input_pickable = true
+collision_layer = 2
+collision_mask = 2
 script = ExtResource( 2 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="." groups=[
@@ -110,7 +113,6 @@ script = ExtResource( 2 )
 position = Vector2( 0, -7 )
 frames = SubResource( 14 )
 animation = "Idle"
-frame = 1
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=[
@@ -130,6 +132,8 @@ margin_bottom = -6.9434
 [node name="Aggro" type="Area2D" parent="." groups=[
 "Friendly",
 ]]
+collision_layer = 3
+collision_mask = 2
 
 [node name="AggroCollider" type="CollisionShape2D" parent="Aggro" groups=[
 "Friendly",
@@ -141,7 +145,6 @@ shape = SubResource( 16 )
 wait_time = 0.05
 
 [node name="PathingTimer" type="Timer" parent="."]
-wait_time = 0.5
 autostart = true
 
 [node name="Node2D" type="Node2D" parent="."]

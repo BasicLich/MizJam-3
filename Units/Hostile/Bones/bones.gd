@@ -16,25 +16,26 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
-func _input(event):
-	if event.is_action_pressed("raise") and is_in_range:
-		var skelly_instance = warrior_node.instance()
-		skelly_instance.position = position
-		skelly_instance.scale = Vector2(0.1,0.1)
-		get_parent().add_child(skelly_instance)
-		skelly_instance.raise()
-		queue_free()
-		
 
 
 func _on_RaiseArea_body_entered(body):
 	if body.is_in_group("Player"):
 		$CPUParticles2D.emitting = true
 		is_in_range = true
+		game_controller.player.bones_ir.append(self)
 		
 
 func _on_RaiseArea_body_exited(body):
 	if body.is_in_group("Player"):
 		$CPUParticles2D.emitting = false
 		is_in_range = false
+		game_controller.player.bones_ir.erase(self)
 
+
+func raise_skelly():
+		var skelly_instance = warrior_node.instance()
+		skelly_instance.position = position
+		skelly_instance.scale = Vector2(0.1,0.1)
+		get_parent().add_child(skelly_instance)
+		skelly_instance.raise()
+		queue_free()

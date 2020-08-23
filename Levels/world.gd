@@ -1,9 +1,11 @@
 extends Node2D
 
 onready var nav_2d : Navigation2D = $Navigation2D
+export var max_villagers : int = 5
 
 var dragging = false
 var selected = []
+var selected_dict = []
 var selected_wr = {}
 var drag_start = Vector2.ZERO
 var select_rect = RectangleShape2D.new()
@@ -13,7 +15,9 @@ var mousePos
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
+	game_controller.total_villagers = max_villagers
+	game_controller.villagers_left = max_villagers
+	game_controller.updage_ui()
 
 
  
@@ -27,11 +31,12 @@ func _unhandled_input(event : InputEvent) -> void:
 				drag_start = get_global_mouse_position()
 			else:
 				for item in selected:
-					if is_instance_valid(item.collider): 
-						if item.collider.is_selected:
-							item.collider.is_selected = false
+					if is_instance_valid(item):
+							if item.is_selected:
+								item.is_selected = false
 				dragging = true
 				drag_start = get_global_mouse_position()
+				selected_dict = []
 				selected = []
 				selected_wr = []
 		elif dragging:
@@ -43,10 +48,11 @@ func _unhandled_input(event : InputEvent) -> void:
 			var query = Physics2DShapeQueryParameters.new()
 			query.set_shape((select_rect))
 			query.transform = Transform2D(0, (drag_end + drag_start) / 2)
-			selected = space.intersect_shape(query)
-			for item in selected:
+			selected_dict = space.intersect_shape(query)
+			for item in selected_dict:
 				if item.collider.is_in_group("Friendly"):
 					item.collider.is_selected = true
+					selected.append(item.collider)
 	if event is InputEventMouseMotion and dragging:
 		update()
 

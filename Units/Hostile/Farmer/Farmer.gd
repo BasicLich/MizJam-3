@@ -56,6 +56,9 @@ func _physics_process(delta):
 
 
 func take_damage(damage : float):
+	if target == null:
+		$FearRange/CollisionShape2D.scale.x = 2.5
+		$FearRange/CollisionShape2D.scale.y = 2.5
 	health -= damage
 	healthBar.value = (health/MaxHealth)*100
 
@@ -79,6 +82,9 @@ func _die():
 	var bone_spawn = Bone.instance()
 	bone_spawn.position = position
 	get_parent().add_child(bone_spawn)
+	
+	game_controller.villagers_left -= 1
+	game_controller.updage_ui()
 	
 	queue_free()
 
@@ -125,7 +131,7 @@ func _chase_target(_target):
 			_chase_target(target)
 
 func _reset_attack():
-	if target != null :
+	if is_instance_valid(target):
 		if target.has_method("take_damage"):
 			target.take_damage(base_damage)
 	is_attacking = false

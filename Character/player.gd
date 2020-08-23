@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
 onready var NavScriptNode  = get_node("../..")
+onready var skull_throw_node = preload("res://Character/Abilities/FireSkull/SkullThrow.tscn")
 
 export (float) var max_health = 100.0
 export (float) var speed = 50.0
@@ -11,6 +12,8 @@ var is_selected : bool = false
 var velocity = Vector2()
 var old_position
 var collision
+
+var bones_ir = [] #ir = in range
 
 onready var health = max_health
 
@@ -26,16 +29,27 @@ func _ready():
 func _input(event):
 	if is_selected:
 		$HealthBar.show()
+		if event.is_action_pressed('right_click'):
+			is_gathering = false
+			_get_path()
+			$AnimatedSprite.play("Run")
+		elif event.is_action_pressed("stop_move"):
+			$AnimatedSprite.play("Idle")
+			path = []
+		elif event.is_action_pressed("ability_1"):
+			if health > 10:
+				take_damage(10)
+				var skull_throw_child = skull_throw_node.instance()
+				skull_throw_child.position = position
+				get_parent().add_child(skull_throw_child)
+		elif event.is_action_pressed("raise"):
+			if bones_ir.size() > 0:
+				if game_controller.max_skelly > game_controller.current_skelly:
+					bones_ir[0].raise_skelly()
+					game_controller.current_skelly += 1
+					game_controller.updage_ui()
 	else:
 		$HealthBar.hide()
-	if event.is_action_pressed('right_click') and is_selected:
-		is_gathering = false
-		_get_path()
-		$AnimatedSprite.play("Run")
-	elif event.is_action_pressed("stop_move") and is_selected:
-		$AnimatedSprite.play("Idle")
-		path = []
-
 
 func _physics_process(delta):
 	var direction = Vector2()
@@ -90,7 +104,9 @@ func _on_PathingTimer_timeout():
 
 func take_damage(damage : float):
 	health -= damage
-	$HealthBar.value = (health/max_health)*100
+	var val = (health/max_health)*100
+	$HealthBar.value = val
+	game_controller.set_player_health(val)
 
 	if health <= 0.0:
 		_die()
@@ -100,6 +116,8 @@ func _die():
 	queue_free()
 
 
-
 func _on_PathTimer_timeout():
 	pass # Replace with function body.
+	
+
+

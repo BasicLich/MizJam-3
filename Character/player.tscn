@@ -56,13 +56,13 @@ radius = 3.49288
 "Friendly",
 "Player",
 ]]
+collision_mask = 2
 script = ExtResource( 2 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 position = Vector2( 0, -8 )
 frames = SubResource( 9 )
 animation = "Idle"
-frame = 3
 playing = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=[
