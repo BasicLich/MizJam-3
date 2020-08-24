@@ -1,0 +1,82 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://UI/Dialog/Dialog.png" type="Texture" id=1]
+[ext_resource path="res://IndieFlower-Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://UI/Dialog/Text-Icon.png" type="Texture" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 30
+outline_size = 1
+outline_color = Color( 0, 0, 0, 1 )
+font_data = ExtResource( 2 )
+
+[sub_resource type="Animation" id=2]
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 730.43, 154.621 ), Vector2( 730.43, 139.621 ), Vector2( 730.43, 154.621 ) ]
+}
+
+[node name="ShopDialogue" type="CanvasLayer"]
+pause_mode = 2
+
+[node name="DialogBox" type="Control" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -383.5
+margin_top = -199.0
+margin_right = 383.5
+mouse_filter = 2
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="TextureRect" type="TextureRect" parent="DialogBox"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource( 1 )
+expand = true
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="DialogBox"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 50.7738
+margin_top = 29.4525
+margin_right = 0.773804
+margin_bottom = -1.54755
+custom_fonts/normal_font = SubResource( 1 )
+custom_colors/default_color = Color( 0.541176, 0.462745, 0.780392, 1 )
+text = "Press [Space] to open Menu.
+Make sure to send your Skellys to the graveyard!  "
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="DialogBox"]
+
+[node name="Indicator" type="Sprite" parent="DialogBox"]
+pause_mode = 2
+position = Vector2( 730.43, 154.621 )
+scale = Vector2( 3, 3 )
+texture = ExtResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="DialogBox/Indicator"]
+autoplay = "New Anim"
+"anims/New Anim" = SubResource( 2 )
+[connection signal="tween_completed" from="DialogBox/Tween" to="DialogBox" method="_on_Tween_tween_completed"]

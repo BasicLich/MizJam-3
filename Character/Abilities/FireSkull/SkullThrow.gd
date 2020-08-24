@@ -11,10 +11,13 @@ var velocity = Vector2()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	damage = game_controller.max_skull_dam_v
 	look_at(get_global_mouse_position())
 	velocity = Vector2(speed, 0).rotated(rotation)
 	if abs(rotation_degrees) >90:
 		$AnimatedSprite.flip_v =true
+		$CPUParticles2D.gravity = -$CPUParticles2D.gravity
+		$CPUParticles2D3.gravity = -$CPUParticles2D3.gravity
 
 func _physics_process(delta):
 	var collision = move_and_collide(velocity)

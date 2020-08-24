@@ -7,7 +7,7 @@ extends CanvasLayer
 
 var pl_health_inc : int = 10
 var pl_skull_dmg_inc : int = 10
-var sk_dmg_inc : int = 10
+var sk_dmg_inc : int = 5
 
 var mh_cost : int = 50
 var ms_cost : int = 100
@@ -161,8 +161,8 @@ func _on_SKHDown_pressed():
 		game_controller.max_skelly_health_n -= 1 
 		game_controller.max_skelly_health_c -= 1 
 		game_controller.max_skelly_health_v -=pl_health_inc
-		$Shop/PlayerUpgrades/Abilities/FlamingSkull/VBoxContainer/SDLabel.text = "Skull Damage: +" + str(game_controller.max_skull_dam_n)
-		$Shop/PlayerUpgrades/Abilities/FlamingSkull/VBoxContainer/HBoxContainer/SDCost.text = str(cost)
+		$Shop/SkellyUpgrades/Abilities/Health/VBoxContainer/SKHLabel.text = "Max Health: " + str(game_controller.max_skelly_health_v)
+		$Shop/SkellyUpgrades/Abilities/Health/VBoxContainer/HBoxContainer/SKHCost.text = str(cost)
 		game_controller.updage_ui()
 
 
@@ -189,3 +189,19 @@ func _on_DamageDown_pressed():
 		$Shop/SkellyUpgrades/Abilities/MaxSkelly/VBoxContainer/DamageLabel.text = "Damage: +" + str(game_controller.max_skelly_damage_n)
 		$Shop/SkellyUpgrades/Abilities/MaxSkelly/VBoxContainer/HBoxContainer/DamageCost.text = str(cost)
 		game_controller.updage_ui()
+
+
+func _on_Next_Level_pressed():
+	if game_controller.villagers_left <= 0:
+		game_controller.level += 1
+		if game_controller.level > game_controller.max_levels:
+			get_tree().change_scene("res://UI/EndScreen.tscn")
+			game_controller.close_shop()
+			
+		else:
+			game_controller.current_skelly = 0
+			game_controller.currency_stored = game_controller.currency
+			var lvl_str = "res://Levels/Lvl" + str(game_controller.level) + ".tscn"
+			get_tree().change_scene(lvl_str)
+			game_controller.close_shop()
+			game_controller.updage_ui()

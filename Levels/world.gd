@@ -3,6 +3,7 @@ extends Node2D
 onready var nav_2d : Navigation2D = $Navigation2D
 export var max_villagers : int = 5
 
+
 var dragging = false
 var selected = []
 var selected_dict = []

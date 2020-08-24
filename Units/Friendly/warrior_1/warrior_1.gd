@@ -15,6 +15,7 @@ onready var health = MaxHealth
 
 var is_selected : bool = false
 var is_attacking : bool = false
+var is_grave : bool = false
 
 var velocity = Vector2()
 var collision
@@ -27,28 +28,40 @@ var is_gathering : bool = false
 func _ready():
 	NavScriptNode.connect("path_requested", self, "_get_path")
 	game_controller.connect("enemy_clicked", self, "_set_clicked_target")
+	game_controller.connect("grave_clicked", self, "_grave_clicked")
+	
+	MaxHealth = game_controller.max_skelly_health_v
+	health = MaxHealth
+	base_damage = game_controller.max_skelly_damage_v
 
 
 func _input(event):
-	if is_selected:
-		$HealthBar.show()
-	else:
-		$HealthBar.hide()
-	if event.is_action_pressed('right_click') and is_selected:
-		$Aggro/AggroCollider.disabled = true
-		is_gathering = false
-		_stop_chase()
-		if is_attacking:
-			_reset_attack()
-		$AnimatedSprite.play("Run")
-	elif event.is_action_pressed("stop_move") and is_selected:
-		$Aggro/AggroCollider.disabled = false
-		if is_instance_valid(target):
-			if global_position.distance_squared_to(target.global_position) <= 400 and not is_attacking:
-				is_attacking = true
-				$AnimatedSprite.play("Attack")
-				$AnimatedSprite.connect("animation_finished", self, "_reset_attack")
-		path = []
+	if event.is_action_pressed("left_click"):
+		is_selected = false
+	if not is_grave:
+		if event.is_action_pressed("select_player"):
+			is_selected = false
+		elif event.is_action_pressed("select_skelly"):
+			is_selected = true
+		if is_selected:
+			$HealthBar.show()
+		else:
+			$HealthBar.hide()
+		if event.is_action_pressed('right_click') and is_selected:
+			$Aggro/AggroCollider.disabled = true
+			is_gathering = false
+			_stop_chase()
+			if is_attacking:
+				_reset_attack()
+			$AnimatedSprite.play("Run")
+		elif event.is_action_pressed("stop_move") and is_selected:
+			$Aggro/AggroCollider.disabled = false
+			if is_instance_valid(target):
+				if global_position.distance_squared_to(target.global_position) <= 400 and not is_attacking:
+					is_attacking = true
+					$AnimatedSprite.play("Attack")
+					$AnimatedSprite.connect("animation_finished", self, "_reset_attack")
+			path = []
 		
 	
 
@@ -142,15 +155,21 @@ func _on_Aggro_body_exited(body):
 
 
 func _on_PathingTimer_timeout():
-	if path.size() ==1 and not is_attacking:
-		if position.distance_squared_to(old_position) < 100:
+	if path.size() <=1 and not is_attacking:
+		if position.distance_squared_to(old_position) < 50:
 				$AnimatedSprite.play("Idle")
 				$Aggro/AggroCollider.disabled = false
 				path = []
+				if is_grave:
+					queue_free()
+					game_controller.currency += int((health/MaxHealth) *100)
+					game_controller.updage_ui()
+
 		old_position = position
 
 
 func take_damage(damage : float):
+	$AnimationPlayer.play("Damaged")
 	health -= damage
 	healthBar.value = (health/MaxHealth)*100
 
@@ -170,3 +189,12 @@ func return_to_grave():
 	game_controller.currency += int((health/MaxHealth) *100)
 	_die()
 
+func _grave_clicked():
+	if is_selected:
+		game_controller.current_skelly -=1
+		game_controller.updage_ui()
+		is_grave = true
+		is_selected = false
+		$CollisionShape2D.disabled = true
+		$HealthBar.hide()
+		

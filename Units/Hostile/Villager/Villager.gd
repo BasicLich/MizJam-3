@@ -88,9 +88,9 @@ func _on_FearRange_body_entered(body):
 			is_feared = true
 			var run_location = global_position
 			if position.direction_to(body.position).x >0.0 :
-				run_location.x -=300
+				run_location.x -=100
 			else:
-				run_location.x += 300
+				run_location.x += 100
 			
 			path = NavScriptNode.request_path(self.global_position, run_location)
 

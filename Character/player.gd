@@ -4,7 +4,7 @@ onready var NavScriptNode  = get_node("../..")
 onready var skull_throw_node = preload("res://Character/Abilities/FireSkull/SkullThrow.tscn")
 
 export (float) var max_health = 100.0
-export (float) var speed = 50.0
+export (float) var speed = 75.0
 
 var path : = PoolVector2Array() setget set_path
 var is_selected : bool = false
@@ -12,7 +12,7 @@ var is_selected : bool = false
 var velocity = Vector2()
 var old_position
 var collision
-
+var on_cooldown :bool = false
 var bones_ir = [] #ir = in range
 
 onready var health = max_health
@@ -27,6 +27,13 @@ func _ready():
 	
 
 func _input(event):
+	if event.is_action_pressed("left_click"):
+		is_selected = false
+	if event.is_action_pressed("select_player"):
+		is_selected = true
+	elif event.is_action_pressed("select_skelly"):
+		is_selected = false
+		
 	if is_selected:
 		$HealthBar.show()
 		if event.is_action_pressed('right_click'):
@@ -37,8 +44,12 @@ func _input(event):
 			$AnimatedSprite.play("Idle")
 			path = []
 		elif event.is_action_pressed("ability_1"):
-			if health > 10:
-				take_damage(10)
+			if health > 25 and not on_cooldown:
+				$FireballSound.play()
+				$Cooldown.start()
+				on_cooldown = true
+				self.modulate = Color(1.0,0.0,1.0,1.0)
+				take_damage(25)
 				var skull_throw_child = skull_throw_node.instance()
 				skull_throw_child.position = position
 				get_parent().add_child(skull_throw_child)
@@ -110,6 +121,7 @@ func take_damage(damage : float):
 
 	if health <= 0.0:
 		_die()
+		game_controller.show_menu()
 
 
 func _die():
@@ -121,3 +133,6 @@ func _on_PathTimer_timeout():
 	
 
 
+func _on_Cooldown_timeout():
+	on_cooldown = false
+	self.modulate = Color(1.0,1.0,1.0,1.0)

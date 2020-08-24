@@ -90,9 +90,7 @@ func _die():
 
 func _on_FearRange_body_entered(body):
 	if body.is_in_group("Friendly"):
-		print("target gained")
 		targetList.append(body)
-		print(targetList)
 		if target == null:
 			target = body
 			$FearRange/CollisionShape2D.scale.x = 0.5
@@ -109,7 +107,6 @@ func _on_FearRange_body_exited(body):
 		targetList.erase(body)
 		if body == target and targetList.size()>0:
 			target = targetList[0]
-			print("EXITED")
 			print(targetList)
 
 

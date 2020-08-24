@@ -1,0 +1,142 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://UI/HealthBar/health_bar.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Units/Hostile/Rider/Rider.gd" type="Script" id=2]
+[ext_resource path="res://Units/Hostile/Rider/Rider-Sheet.png" type="Texture" id=3]
+[ext_resource path="res://Units/Hostile/Rider/Charge.png" type="Texture" id=4]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 5.10226
+height = 4.59369
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 111.013
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 3 )
+region = Rect2( 0, 0, 16, 24 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 3 )
+region = Rect2( 16, 0, 16, 24 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 3 )
+region = Rect2( 32, 0, 16, 24 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 3 )
+region = Rect2( 48, 0, 16, 24 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 3 )
+region = Rect2( 64, 0, 16, 24 )
+
+[sub_resource type="SpriteFrames" id=8]
+animations = [ {
+"frames": [ SubResource( 3 ), SubResource( 4 ), SubResource( 5 ), SubResource( 6 ), SubResource( 7 ) ],
+"loop": true,
+"name": "Run",
+"speed": 5.0
+} ]
+
+[sub_resource type="Animation" id=9]
+resource_name = "Die"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 0.1, 0.3 ) ]
+}
+tracks/1/type = "method"
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"values": [  ]
+}
+
+[node name="Rider" type="KinematicBody2D" groups=[
+"Hostile",
+]]
+input_pickable = true
+collision_layer = 2
+script = ExtResource( 2 )
+MaxHealth = 100.0
+
+[node name="BodyCollider" type="CollisionShape2D" parent="."]
+position = Vector2( -0.40583, 2.16441 )
+shape = SubResource( 1 )
+
+[node name="FearRange" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="FearRange"]
+position = Vector2( -0.485932, -0.777382 )
+shape = SubResource( 2 )
+
+[node name="HealthBar" parent="." instance=ExtResource( 1 )]
+modulate = Color( 1, 1, 1, 0.694118 )
+margin_left = -4.71143
+margin_top = -19.9434
+margin_right = 11.2886
+margin_bottom = -3.9434
+
+[node name="AggroTimer" type="Timer" parent="."]
+wait_time = 4.0
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 8 )
+animation = "Run"
+frame = 2
+playing = true
+
+[node name="PathTimer" type="Timer" parent="."]
+wait_time = 3.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Die = SubResource( 9 )
+
+[node name="RotationHold" type="Node2D" parent="."]
+
+[node name="End" type="Node2D" parent="RotationHold"]
+position = Vector2( 108.75, 1.85837 )
+
+[node name="Charge" type="Sprite" parent="RotationHold"]
+visible = false
+position = Vector2( 60.3561, 1.82442 )
+scale = Vector2( 1, 0.649424 )
+texture = ExtResource( 4 )
+
+[node name="ChargeCoolDown" type="Timer" parent="."]
+wait_time = 10.0
+one_shot = true
+
+[node name="ChargeWait" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="ChargeTime" type="Timer" parent="."]
+wait_time = 1.7
+one_shot = true
+[connection signal="input_event" from="." to="." method="_on_Farmer_input_event"]
+[connection signal="body_entered" from="FearRange" to="." method="_on_FearRange_body_entered"]
+[connection signal="body_exited" from="FearRange" to="." method="_on_FearRange_body_exited"]
+[connection signal="timeout" from="AggroTimer" to="." method="_on_AggroTimer_timeout"]
+[connection signal="timeout" from="PathTimer" to="." method="_on_PathTimer_timeout"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
+[connection signal="timeout" from="ChargeCoolDown" to="." method="_on_ChargeCoolDown_timeout"]
+[connection signal="timeout" from="ChargeWait" to="." method="_on_ChargeWait_timeout"]
+[connection signal="timeout" from="ChargeTime" to="." method="_on_ChargeTime_timeout"]

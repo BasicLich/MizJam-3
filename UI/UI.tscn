@@ -12,7 +12,7 @@
 size = 70
 font_data = ExtResource( 5 )
 
-[node name="CanvasLayer" type="CanvasLayer"]
+[node name="UI" type="CanvasLayer"]
 pause_mode = 2
 script = ExtResource( 3 )
 
